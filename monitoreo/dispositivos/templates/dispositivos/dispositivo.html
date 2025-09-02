@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>dispositivo</title>
+    </head>
+    <body>
+        <h1>
+            Dispositivo {{ dispositivo.nombre }}
+            <p>categoria: {{dispositivo.categoria}}</p>
+            <p>fecha de creacion : {{ dispositivo.created_ }}</p>
+            <p>estado: {{ dispositivo.estado }}</p>
+            volver a <a href="{%url 'listar_dispositivos'}"></a>
+        </h1>
+    </body>
+</html>
