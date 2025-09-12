@@ -1,9 +1,231 @@
-<ul>
-    {% for d in dispositivos %}
-        <li>{{ d.nombre }} - {{ d.categoria }} - {{ d.categoria.estado }}
-            ir a <a href="{% url 'dispositivo' d.id %}">Detalle</a>
-        </li>
-    {% empty %}
-        <li>No hay dispositivos.</li>
-    {% endfor %}
-    </ul>
+{% extends "dispositivos/base.html" %}
+
+{% block content %}
+<style>
+/* Botón claro que al pasar el mouse se vuelve negro con texto blanco */
+.btn-hover-black {
+    transition: all 0.3s ease; /* efecto suave */
+}
+
+.btn-hover-black:hover {
+    background-color: #000 !important; /* fondo negro */
+    color: #fff !important;            /* texto blanco */
+    border-color: #000 !important;     /* opcional: borde negro */
+}
+
+/* Badges de alertas recientes en gris */
+.badge-alert-black {
+    background-color: #343a40;
+    color: #fff;
+    padding: 0.5em 0.75em;
+    border-radius: 0.25rem;
+}
+</style>
+
+<div class="container mt-4">
+
+    <div class="row g-3">
+        <!-- Dispositivos por categoría -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Dispositivos por Categoría</h5>
+                    {% if categories %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover text-white mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in categories %}
+                                <tr>
+                                    <td>{{ cat.nombre }}</td>
+                                    <td>{{ cat.device_count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p>No hay categorías.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispositivos por zona -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Dispositivos por Zona</h5>
+                    {% if zones %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover text-white mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for z in zones %}
+                                <tr>
+                                    <td>{{ z.nombre }}</td>
+                                    <td>{{ z.device_count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p>No hay zonas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas de la semana -->
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Alertas de la Semana</h5>
+                    <div class="d-flex gap-2 mb-2">
+                        <span class="badge badge-alert-black">Grave: {{ alerts.grave }}</span>
+                        <span class="badge badge-alert-black">Alta: {{ alerts.alta }}</span>
+                        <span class="badge badge-alert-black">Media: {{ alerts.media }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimas 10 Mediciones -->
+    <div class="row g-3 mt-3">
+        <div class="col-md-8">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Últimas 10 Mediciones</h5>
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Dispositivo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in measurements %}
+                                <tr>
+                                    <td>{{ m.fecha|date:"d-m-Y H:i" }}</td>
+                                    <td>{{ m.dispositivo.nombre }}</td>
+                                    <td>{{ m.consumo }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3">No hay mediciones registradas.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas recientes -->
+        <div class="col-md-4">
+            <h5>Alertas Recientes</h5>
+            {% for alert in recent_alerts %}
+                <div class="card bg-secondary text-light shadow mb-2">
+                    <div class="d-flex justify-content-between align-items-start p-2">
+                        <div>
+                            <h6 class="mb-1">{{ alert.dispositivo.nombre }}</h6>
+                            <p class="mb-0">{{ alert.mensaje }}</p>
+                            <small class="text-light">{{ alert.fecha|date:"d-m-Y H:i" }}</small>
+                        </div>
+                        <span class="badge badge-alert-black ms-2">
+                            {{ alert.nivel }}
+                        </span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-info">No hay alertas recientes.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Lista de Dispositivos con filtro dentro del mismo card -->
+    <div class="row g-3 mt-3">
+        <div class="col-md-12">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Lista de Dispositivos</h5>
+                        <!-- Formulario de filtro -->
+                        <form method="GET" class="d-flex gap-2 align-items-end">
+                            <div>
+                                <label for="categoria" class="form-label text-light mb-0">Categoría</label>
+                                <select name="categoria" id="categoria" class="form-select form-select-sm">
+                                    <option value="">Todas</option>
+                                    {% for cat in categories %}
+                                        <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label for="zona" class="form-label text-light mb-0">Zona</label>
+                                <select name="zona" id="zona" class="form-select form-select-sm">
+                                    <option value="">Todas</option>
+                                    {% for z in zones %}
+                                        <option value="{{ z.id }}" {% if request.GET.zona == z.id|stringformat:"s" %}selected{% endif %}>{{ z.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-light btn-hover-black">Filtrar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tabla de dispositivos -->
+                    {% if dispositivos %}
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover text-white mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Zona</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for d in dispositivos %}
+                                        <tr>
+                                            <td>{{ d.nombre }}</td>
+                                            <td>{{ d.categoria.nombre }}</td>
+                                            <td>{{ d.zona.nombre }}</td>
+                                            <td>{{ d.estado }}</td>
+                                            <td>
+                                                <a href="{% url 'dispositivo' d.id %}" class="btn btn-outline-light me-2">Detalle</a>
+                                                <a href="{% url 'editar_dispositivo' d.id %}" class="btn btn-outline-light me-2">Editar</a>
+                                                <a href="{% url 'eliminar_dispositivo' d.id %}" class="btn btn-outline-light me-2">Eliminar</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mt-2">No hay dispositivos.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

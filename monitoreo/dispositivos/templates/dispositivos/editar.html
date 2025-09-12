@@ -1,0 +1,29 @@
+
+{% extends "dispositivos/base.html" %}
+
+{% block content %}
+<style>
+/* Botón claro que al pasar el mouse se vuelve negro con texto blanco */
+.btn-hover-black {
+    transition: all 0.3s ease; /* efecto suave */
+}
+
+.btn-hover-black:hover {
+    background-color: #000 !important; /* fondo negro */
+    color: #fff !important;            /* texto blanco */
+    border-color: #000 !important;     /* opcional: borde negro */
+}
+</style>
+-----
+<div class="container p-4" style="background-color: #333; border-radius: 8px; color: white;">
+    <h2>Editar Dispositivo</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-light btn-hover-black">Actualizar</button>
+        <a href="{% url 'dispositivos' %}" class="btn btn-light btn-hover-black">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

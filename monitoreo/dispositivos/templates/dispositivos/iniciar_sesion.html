@@ -1,0 +1,96 @@
+{% extends "dispositivos/base.html" %}
+
+{% block content %}
+<style>
+/* botón claro que al pasar el mouse se vuelve negro con texto blanco */
+.btn-hover-black {
+    transition: all 0.18s ease;
+}
+.btn-hover-black:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+}
+
+/* pequeño ajuste para el card centrado del login */
+.login-wrapper {
+    max-width: 420px;
+    margin: 3.5rem auto;
+}
+.form-help {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.8);
+}
+</style>
+
+<div class="container">
+    <div class="login-wrapper">
+        <div class="card bg-secondary text-light shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-3 text-center">Sign in to EcoEnergy</h3>
+
+                {# Mostrar errores generales si existen (por ejemplo, desde Django messages) #}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="">
+                    {% csrf_token %}
+
+                    <!-- Username / Email -->
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username or Email</label>
+                        <input type="text" name="username" id="id_username" class="form-control" placeholder="Enter your username or email" required autofocus>
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.username.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter your password" required>
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.password.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Remember me + forgot -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="id_remember">
+                            <label class="form-check-label form-help" for="id_remember">Remember me</label>
+                        </div>
+                        <div>
+                            <!-- Aquí va a recuperación -->
+                            <a href="{% url 'password-reset' %}" class="text-light small">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-light btn-hover-black">Sign In</button>
+                    </div>
+
+                    <!-- Registro y ayuda -->
+                    <div class="text-center form-help">
+                        <span>Don't have an account?</span>
+                        <a href="{% url 'crear_dispositivo' %}" class="text-light text-decoration-underline">Register</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- extra small note -->
+        <p class="text-center form-help mt-2">By signing in you accept the EcoEnergy terms.</p>
+    </div>
+</div>
+{% endblock %}

@@ -50,9 +50,16 @@ class Medicion(BaseModel):
         return f"{self.dispositivo} - {self.consumo} kWh"
 
 class Alerta(BaseModel):
+    NIVEL_CHOICES = [
+        ("GRAVE", "Grave"),
+        ("ALTA", "Alta"),
+        ("MEDIA", "Media"),
+    ]
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE)
     mensaje = models.CharField(max_length=200)
+    nivel = models.CharField(max_length=5, choices=NIVEL_CHOICES, default="MEDIA")
     fecha = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return f"Alerta {self.dispositivo} - {self.mensaje}"

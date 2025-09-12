@@ -1,0 +1,17 @@
+{% extends "dispositivos/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card bg-secondary text-light shadow">
+        <div class="card-body">
+            <h5 class="card-title">Agregar Medición</h5>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-outline-light me-2">Guardar</button>
+                <button type="button" class="btn btn-outline-light" onclick="history.back()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

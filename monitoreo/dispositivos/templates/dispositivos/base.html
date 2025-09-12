@@ -1,28 +1,63 @@
+<style>
+.badge-alert-black {
+    background-color: #000 !important; /* fondo negro */
+    color: #fff !important;           /* texto blanco */
+}
+</style>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sistema de Dispositivos</title>
+    <title>EcoEnergy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body>
+<body class="bg-light">
+
     <!-- Navbar -->
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dispositivos' %}">Dispositivos</a>
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">EcoEnergy</a>
+
+            <!-- Links de navegación -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'dispositivos' %}">Dispositivos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'crear_medicion' %}">Mediciones</a></li>
+                </ul>
+            </div>
+
+            <!-- Botones a la derecha -->
+           <!-- Botones a la derecha -->
+            <div class="d-flex">
+                <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Iniciar Sesión</a>
+                <a class="btn btn-light btn-hover-black" href="{% url 'register' %}">Registrarse</a>
+            </div>
+
         </div>
     </nav>
 
     <!-- Contenido dinámico -->
-    <div class="container mt-4">
+    <div class="container my-4">
         {% block content %}
-        <!-- Aquí se inyecta el contenido de cada página -->
+        <!-- Aquí se inyecta el contenido -->
         {% endblock %}
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light text-center p-2 mt-5">
-        <p>Sistema de Monitoreo © 2025</p>
+    <footer class="bg-dark text-light p-2 mt-5 d-flex justify-content-between align-items-center" style="border-top: 1px solid #333;">
+        <!-- Izquierda -->
+        <div>
+            <p class="mb-0">© 2025 EcoEnergy</p>
+        </div>
+        <!-- Derecha -->
+        <div>
+            <a href="#" class="text-light text-decoration-none">Soporte</a>
+        </div>
     </footer>
+
 </body>
 </html>

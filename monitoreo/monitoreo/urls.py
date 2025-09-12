@@ -1,29 +1,44 @@
-"""
-URL configuration for monitoreo project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
-from dispositivos.views import inicio, dispositivo, crear_dispositivo
+from dispositivos import views
+from dispositivos.views import (
+    inicio, 
+    dispositivo, 
+    crear_dispositivo, 
+    editar_dispositivo, 
+    eliminar_dispositivo
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Página principal y listado de dispositivos
     path('', inicio, name='inicio'),
     path('dispositivos/', inicio, name='dispositivos'),
 
-    path('dispositivos/crear', crear_dispositivo, name='crear_dispositivo'),
+    # Crear dispositivo
+    path('dispositivos/crear/', crear_dispositivo, name='crear_dispositivo'),
 
+    # Editar dispositivo
+    path('dispositivos/editar/<int:dispositivo_id>/', editar_dispositivo, name='editar_dispositivo'),
+
+    # Eliminar dispositivo
+    path('dispositivos/eliminar/<int:dispositivo_id>/', eliminar_dispositivo, name='eliminar_dispositivo'),
+
+    # Detalle de un dispositivo
     path('dispositivos/<int:dispositivo_id>/', dispositivo, name='dispositivo'),
+
+    #mediciones
+    path('mediciones/crear/', views.crear_medicion, name='crear_medicion'),
+
+    #inicio sesion
+    path('login/', views.login_view, name='login'),
+
+    #registrarse
+    path('register/', views.register_view, name='register'),
+
+    path('dashboard', views.dashboard_view, name='dashboard'), 
+
+    path('password-reset', views.password_reset_view, name='password-reset'),  
+
 ]
