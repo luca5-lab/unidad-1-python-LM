@@ -16,9 +16,15 @@
 </style>
 -----
 <div class="container p-4" style="background-color: #333; border-radius: 8px; color: white;">
-    <h2>Editar Dispositivo</h2>
     
-    <form method="POST">
+    <h3>Editar Dispositivo: {{ dispositivo.nombre }}</h3>
+    
+{% if dispositivo.imagen %}
+<p>Imagen actual:</p>
+<img src="{{ dispositivo.imagen.url}}" class="img-thumbnail mb-3" style="max-height:150px;"> 
+{% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-light btn-hover-black">Actualizar</button>

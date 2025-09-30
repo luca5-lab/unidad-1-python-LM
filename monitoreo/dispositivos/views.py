@@ -77,7 +77,7 @@ def crear_medicion(request):
 # -----------------------------
 def crear_dispositivo(request):
     if request.method == 'POST':
-        form = DispositivoForm(request.POST)
+        form = DispositivoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('inicio')
@@ -91,13 +91,13 @@ def crear_dispositivo(request):
 def editar_dispositivo(request, dispositivo_id):
     dispositivo_obj = get_object_or_404(Dispositivo, id=dispositivo_id)
     if request.method == 'POST':
-        form = DispositivoForm(request.POST, instance=dispositivo_obj)
+        form = DispositivoForm(request.POST,request.FILES, instance=dispositivo_obj)
         if form.is_valid():
             form.save()
             return redirect('inicio')
     else:
         form = DispositivoForm(instance=dispositivo_obj)
-    return render(request, 'dispositivos/editar.html', {'form': form})
+    return render(request, 'dispositivos/editar.html', {'form': form, 'dispositivo': dispositivo})
 
 # -----------------------------
 # Eliminar un dispositivo

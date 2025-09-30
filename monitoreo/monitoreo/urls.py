@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from dispositivos import views
@@ -39,6 +41,10 @@ urlpatterns = [
 
     path('dashboard', views.dashboard_view, name='dashboard'), 
 
-    path('password-reset', views.password_reset_view, name='password-reset'),  
+    path('password-reset', views.password_reset_view, name='password-reset'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

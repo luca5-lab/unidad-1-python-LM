@@ -37,6 +37,7 @@ class Dispositivo(BaseModel):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     zona = models.ForeignKey(Zona, on_delete=models.CASCADE)
     consumo_maximo = models.IntegerField()  # watts
+    imagen = models.ImageField(upload_to='dispositivos/', null=True, blank=True)
 
     def __str__(self):
         return self.nombre
