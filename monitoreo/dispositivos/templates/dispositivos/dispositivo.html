@@ -40,6 +40,12 @@
             <div class="card-body">
                 <h2 class="card-title mb-4">Dispositivo: {{ dispositivo.nombre }}</h2>
 
+                {% if dispositivo.imagen %}
+        <img src="{{ dispositivo.imagen.url }}" alt="Imagen del dispositivo" class="img-fluid mb-4" />
+    {% else %}
+        <p>No hay imagen disponible.</p>
+    {% endif %}
+
                 <!-- Tabla resumen -->
                 <div class="table-responsive mb-4">
                     <table class="table table-dark table-striped text-center">

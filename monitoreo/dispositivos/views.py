@@ -4,7 +4,7 @@ from django.utils import timezone
 from .models import Categoria, Zona, Dispositivo, Medicion, Alerta
 from .forms import DispositivoForm
 from .forms import MedicionForm
-
+from django.contrib.auth.decorators import login_required
 # -----------------------------
 # Vista principal (antes "inicio")
 # -----------------------------
@@ -97,7 +97,8 @@ def editar_dispositivo(request, dispositivo_id):
             return redirect('inicio')
     else:
         form = DispositivoForm(instance=dispositivo_obj)
-    return render(request, 'dispositivos/editar.html', {'form': form, 'dispositivo': dispositivo})
+    return render(request, 'dispositivos/editar.html', {'form': form, 'dispositivo': dispositivo_obj})
+
 
 # -----------------------------
 # Eliminar un dispositivo

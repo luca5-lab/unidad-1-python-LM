@@ -1,18 +1,25 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.contrib.auth.views import LoginView
+from django.urls import path, include
+from django.views.generic import TemplateView
 from dispositivos import views
 from dispositivos.views import (
     inicio, 
     dispositivo, 
     crear_dispositivo, 
     editar_dispositivo, 
-    eliminar_dispositivo
+    eliminar_dispositivo,
+    dashboard_view
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('dashboard', views.dashboard_view, name='dashboard'),
+
+    path("", include("accounts.urls")),
 
     # Página principal y listado de dispositivos
     path('', inicio, name='inicio'),
@@ -33,15 +40,6 @@ urlpatterns = [
     #mediciones
     path('mediciones/crear/', views.crear_medicion, name='crear_medicion'),
 
-    #inicio sesion
-    path('login/', views.login_view, name='login'),
-
-    #registrarse
-    path('register/', views.register_view, name='register'),
-
-    path('dashboard', views.dashboard_view, name='dashboard'), 
-
-    path('password-reset', views.password_reset_view, name='password-reset'),
 
 ]
 
