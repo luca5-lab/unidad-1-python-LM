@@ -1,0 +1,55 @@
+[
+  {
+    "model": "dispositivos.zona",
+    "pk": 1,
+    "fields": {
+      "nombre": "Oficina Principal",
+      "estado": "ACTIVO",
+      "created_at": "2025-10-01T00:00:00Z",
+      "updated_at": "2025-10-01T00:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "dispositivos.dispositivo",
+    "pk": 1,
+    "fields": {
+      "nombre": "Lámpara LED 20W",
+      "categoria": 1,
+      "zona": 1,
+      "consumo_maximo": 20,
+      "imagen": "",
+      "estado": "ACTIVO",
+      "created_at": "2025-10-01T00:00:00Z",
+      "updated_at": "2025-10-01T00:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "dispositivos.medicion",
+    "pk": 1,
+    "fields": {
+      "dispositivo": 1,
+      "consumo": 0.5,
+      "estado": "ACTIVO",
+      "fecha": "2025-10-01T08:00:00Z",
+      "created_at": "2025-10-01T00:00:00Z",
+      "updated_at": "2025-10-01T00:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "dispositivos.alerta",
+    "pk": 1,
+    "fields": {
+      "dispositivo": 1,
+      "mensaje": "Consumo superior al máximo permitido",
+      "nivel": "GRAVE",
+      "fecha": "2025-10-01T09:10:00Z",
+      "estado": "ACTIVO",
+      "created_at": "2025-10-01T00:00:00Z",
+      "updated_at": "2025-10-01T00:00:00Z",
+      "deleted_at": null
+    }
+  }
+]
