@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dispositivos',
     'accounts',
+    'organizations',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,7 @@ if ENGINE == "mysql":
             "OPTIONS": {"charset": "utf8mb4"},
         }
     }
-else:  # SQLite por defecto
+else:  
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

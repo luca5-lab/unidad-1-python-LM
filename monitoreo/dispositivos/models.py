@@ -1,4 +1,5 @@
 from django.db import models
+from organizations.models import Organization
 
 # -----------------------------
 # Modelo Base con atributos comunes
@@ -10,9 +11,11 @@ class BaseModel(models.Model):
     ]
 
     estado = models.CharField(max_length=10, choices=ESTADOS, default="ACTIVO")
-    created_at = models.DateTimeField(auto_now_add=True)   # se asigna al crear
-    updated_at = models.DateTimeField(auto_now=True)       # se actualiza cada vez que se guarda
-    deleted_at = models.DateTimeField(null=True, blank=True)  # opcional para borrado lógico
+    created_at = models.DateTimeField(auto_now_add=True)   
+    updated_at = models.DateTimeField(auto_now=True)       
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    
 
     class Meta:
         abstract = True   # no crea tabla, solo se hereda
@@ -26,11 +29,19 @@ class Categoria(BaseModel):
     def __str__(self):
         return self.nombre
 
+
 class Zona(BaseModel):
+    organization = models.ForeignKey(
+    'organizations.Organization',
+    on_delete=models.CASCADE,
+    related_name='zonas_dispositivo',
+    default = 1
+    )
     nombre = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.organization.name})"
+
 
 class Dispositivo(BaseModel):
     nombre = models.CharField(max_length=100)
@@ -42,6 +53,7 @@ class Dispositivo(BaseModel):
     def __str__(self):
         return self.nombre
 
+
 class Medicion(BaseModel):
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -49,6 +61,7 @@ class Medicion(BaseModel):
 
     def __str__(self):
         return f"{self.dispositivo} - {self.consumo} kWh"
+
 
 class Alerta(BaseModel):
     NIVEL_CHOICES = [
@@ -60,7 +73,6 @@ class Alerta(BaseModel):
     mensaje = models.CharField(max_length=200)
     nivel = models.CharField(max_length=5, choices=NIVEL_CHOICES, default="MEDIA")
     fecha = models.DateTimeField(auto_now_add=True)
-
 
     def __str__(self):
         return f"Alerta {self.dispositivo} - {self.mensaje}"
