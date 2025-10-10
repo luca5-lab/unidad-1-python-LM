@@ -6,7 +6,7 @@ class Command(BaseCommand):
     help = "Seed basic data: groups and two users (superuser and limitado)."
 
     def handle(self, *args, **options):
-        # Create groups
+       
         g_admin, _ = Group.objects.get_or_create(name='admin')
         g_limitado, _ = Group.objects.get_or_create(name='maestro')
 

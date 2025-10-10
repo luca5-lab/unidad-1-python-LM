@@ -1,9 +1,7 @@
 from django.db import models
 from organizations.models import Organization
 
-# -----------------------------
-# Modelo Base con atributos comunes
-# -----------------------------
+
 class BaseModel(models.Model):
     ESTADOS = [
         ("ACTIVO", "Activo"),
@@ -18,11 +16,9 @@ class BaseModel(models.Model):
     
 
     class Meta:
-        abstract = True   # no crea tabla, solo se hereda
+        abstract = True  
 
-# -----------------------------
-# Tablas principales
-# -----------------------------
+
 class Categoria(BaseModel):
     nombre = models.CharField(max_length=100)
 
