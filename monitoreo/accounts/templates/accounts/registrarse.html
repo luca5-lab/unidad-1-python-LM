@@ -61,6 +61,14 @@
       </div>
     </div>
   </div>
+  {% if messages %}
+  <div class="mb-3">
+    {% for message in messages %}
+      <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 
   <!-- Footer -->
   <footer class="bg-dark text-light p-2 mt-5 d-flex justify-content-between">
