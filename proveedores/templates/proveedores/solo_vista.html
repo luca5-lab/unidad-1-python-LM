@@ -1,0 +1,232 @@
+{% extends "proveedores/base.html" %}
+
+{% block content %}
+<style>
+.btn-hover-black {
+    transition: all 0.3s ease;
+}
+.btn-hover-black:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+}
+.select-sm-custom {
+    width: auto;
+    min-width: 130px;
+    display: inline-block;
+}
+</style>
+
+<div class="container mt-4">
+    <h1 class="h4 mb-3">Bienvenido</h1>
+    <p>Bienvenido/a, {{ user }}. Aquí puedes consultar información general del sistema de compras.</p>
+
+    <!-- LISTA DE PROVEEDORES -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-12">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Lista de Proveedores</h5>
+
+                    <form method="GET" class="d-flex flex-wrap gap-2 mb-3 align-items-end">
+                        <div class="flex-grow-1">
+                            <input type="text" name="search_proveedor" class="form-control form-control-sm"
+                                placeholder="Buscar por nombre, RUT o contacto" value="{{ search_proveedor }}">
+                        </div>
+
+                        <div>
+                            <label for="orden" class="form-label text-light mb-0 small"></label>
+                            <select name="orden" id="orden" class="form-select form-select-sm select-sm-custom">
+                                <option value="">Por defecto</option>
+                                <option value="asc" {% if request.GET.orden == "asc" %}selected{% endif %}>A - Z</option>
+                                <option value="desc" {% if request.GET.orden == "desc" %}selected{% endif %}>Z - A</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-light btn-hover-black">Buscar</button>
+                        <a href="{% url 'solo_vista' %}" class="btn btn-light btn-hover-black">Limpiar</a>
+                    </form>
+
+                    {% if proveedores %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover text-white mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>RUT</th>
+                                    <th>Contacto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in proveedores %}
+                                <tr>
+                                    <td>{{ p.nombre }}</td>
+                                    <td>{{ p.rut }}</td>
+                                    <td>{{ p.contacto }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINADOR -->
+                    <nav aria-label="Proveedores pagination" class="mt-2">
+                        <ul class="pagination justify-content-center">
+                            {% if proveedores.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?proveedores_page={{ proveedores.previous_page_number }}&search_proveedor={{ search_proveedor }}">Anterior</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                            {% endif %}
+
+                            {% for num in proveedores.paginator.page_range %}
+                            {% if proveedores.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?proveedores_page={{ num }}&search_proveedor={{ search_proveedor }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if proveedores.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?proveedores_page={{ proveedores.next_page_number }}&search_proveedor={{ search_proveedor }}">Siguiente</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+
+                    {% else %}
+                    <div class="alert alert-info mt-2">No hay proveedores registrados.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTROS DE PRODUCTOS -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-12">
+            <form method="GET" class="d-flex flex-wrap gap-2 align-items-end">
+                <div>
+                    <label for="tipo_producto" class="form-label text-light mb-0 small">Tipo de producto</label>
+                    <select name="tipo_producto" id="tipo_producto" class="form-select form-select-sm">
+                        <option value="">Todos los tipos</option>
+                        {% for tipo in tipos_producto %}
+                        <option value="{{ tipo }}" {% if request.GET.tipo_producto == tipo %}selected{% endif %}>
+                            {{ tipo }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="proveedor" class="form-label text-light mb-0 small">Proveedor</label>
+                    <select name="proveedor" id="proveedor" class="form-select form-select-sm">
+                        <option value="">Proveedor</option>
+                        {% for p in proveedores %}
+                        <option value="{{ p.id }}" {% if request.GET.proveedor == p.id|stringformat:"s" %}selected{% endif %}>
+                            {{ p.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="nombre" class="form-label text-light mb-0 small">Buscar producto</label>
+                    <input type="text" name="nombre" id="nombre" value="{{ request.GET.nombre }}"
+                        class="form-control form-control-sm" placeholder="Nombre del producto">
+                </div>
+
+                <div>
+                    <label for="orden" class="form-label text-light mb-0 small">Ordenar</label>
+                    <select name="orden" id="orden" class="form-select form-select-sm select-sm-custom">
+                        <option value="">Por defecto</option>
+                        <option value="asc" {% if request.GET.orden == "asc" %}selected{% endif %}>A - Z</option>
+                        <option value="desc" {% if request.GET.orden == "desc" %}selected{% endif %}>Z - A</option>
+                    </select>
+                </div>
+
+                <div class="align-self-end d-flex gap-2">
+                    <button type="submit" class="btn btn-dark btn-hover-black">Filtrar</button>
+                    <a href="{% url 'solo_vista' %}" class="btn btn-dark btn-hover-black">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LISTA DE PRODUCTOS -->
+    <div class="row g-3">
+        <div class="col-md-12">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Lista de Productos</h5>
+                    {% if productos %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover text-white mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de producto</th>
+                                    <th>Producto</th>
+                                    <th>Proveedor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prod in productos %}
+                                <tr>
+                                    <td>{{ prod.tipo_producto }}</td>
+                                    <td>{{ prod.nombre }}</td>
+                                    <td>{{ prod.proveedor.nombre }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINADOR PRODUCTOS -->
+                    <nav aria-label="Productos pagination" class="mt-2">
+                        <ul class="pagination justify-content-center">
+                            {% if productos.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?productos_page={{ productos.previous_page_number }}">Anterior</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                            {% endif %}
+
+                            {% for num in productos.paginator.page_range %}
+                            {% if productos.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?productos_page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if productos.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?productos_page={{ productos.next_page_number }}">Siguiente</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+
+                    {% else %}
+                    <div class="alert alert-info mt-2">No hay productos registrados.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

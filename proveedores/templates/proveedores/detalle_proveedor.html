@@ -1,0 +1,240 @@
+{% extends "proveedores/base.html" %}
+
+{% block content %}
+<style>
+/* --- Mantener los estilos anteriores --- */
+.proveedor-header {
+    background: linear-gradient(135deg, #343a40, #495057);
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.proveedor-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.proveedor-info {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.card-productos {
+    border: none;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.table-products thead {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.table-products tbody tr:hover {
+    background-color: #e9ecef;
+    transition: 0.3s;
+}
+
+.btn-hover-dark {
+    transition: all 0.3s ease;
+}
+
+.btn-hover-dark:hover {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <!-- Encabezado del proveedor -->
+    <div class="proveedor-header mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="mb-2">{{ proveedor.nombre }}</h1>
+            <div class="proveedor-info">
+                <p class="mb-1"><strong>Email:</strong> {{ proveedor.email }}</p>
+                <p class="mb-1"><strong>RUT:</strong> {{ proveedor.rut }}</p>
+                <p class="mb-1"><strong>Tipo de producto:</strong> {{ proveedor.tipo_producto }}</p>
+                <p class="mb-0"><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+            </div>
+        </div>
+        <div>
+            <!-- Botón para abrir modal de edición -->
+            <button class="btn btn-light btn-hover-dark me-2" data-bs-toggle="modal" data-bs-target="#editarProveedorModal">
+                 Editar
+            </button>
+        </div>
+    </div>
+
+    <!-- Productos asociados -->
+    <div class="card card-productos">
+        <div class="card-body">
+            <h4 class="card-title mb-3 text-dark">Productos Asociados</h4>
+            {% if proveedor.productos.all %}
+                <div class="table-responsive">
+                    <table class="table table-products table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tipo de producto</th>
+                                <th scope="col">Nombre del Producto</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in proveedor.productos.all %}
+    <tr>
+        <td>{{ producto.tipo_producto }}</td>
+        <td>{{ producto.nombre }}</td>
+
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger btn-eliminar" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info mb-0">
+                    Este proveedor no tiene productos asociados actualmente.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="mt-4 d-flex gap-2">
+        <a href="{% url 'dashboard' %}" class="btn btn-dark btn-hover-dark">Volver</a>
+        {% include 'proveedores/agregar_producto_modal.html' %}
+    </div>
+</div>
+
+<!-- Modal de Edición -->
+<div class="modal fade" id="editarProveedorModal" tabindex="-1" aria-labelledby="editarProveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'detalle_proveedor' proveedor.id %}">
+                {% csrf_token %}
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="editarProveedorModalLabel">Editar Proveedor</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-dark btn-hover-dark">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Producto -->
+<!-- Modal Agregar Producto -->
+<div class="modal fade" id="agregarProductoModal" tabindex="-1" aria-labelledby="agregarProductoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'agregar_producto' proveedor.id %}">
+                {% csrf_token %}
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="agregarProductoModalLabel">Agregar Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tipo_producto" class="form-label">Tipo de Producto</label>
+                        <select name="tipo_producto" id="tipo_producto" class="form-select" required>
+                            <option value="">Selecciona un tipo</option>
+                            <option value="Liquido">Líquido</option>
+                            <option value="Seco">Seco</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="producto_nombre" class="form-label">Nombre del Producto</label>
+                        <input type="text" name="producto_nombre" id="producto_nombre" class="form-control" placeholder="Ingrese nombre del producto" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success btn-hover-dark">Agregar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- 🔥 SWEETALERT MENSAJES -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Mensajes de Django
+    {% if messages %}
+        {% for message in messages %}
+        Swal.fire({
+            icon: "{% if 'success' in message.tags %}success{% elif 'error' in message.tags %}error{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}",
+            title: "{% if 'success' in message.tags %}¡Éxito!{% elif 'error' in message.tags %}¡Error!{% elif 'warning' in message.tags %}Atención{% else %}Mensaje{% endif %}",
+            text: "{{ message|escapejs }}",
+            confirmButtonColor: "#000",
+            confirmButtonText: "Aceptar",
+            allowOutsideClick: false,
+            allowEscapeKey: true
+        });
+        {% endfor %}
+    {% endif %}
+
+    // SweetAlert para eliminar producto
+    const botonesEliminar = document.querySelectorAll(".btn-eliminar");
+
+    botonesEliminar.forEach(btn => {
+        btn.addEventListener("click", function() {
+            const productoId = this.dataset.id;
+            const productoNombre = this.dataset.nombre;
+
+            Swal.fire({
+                title: `¿Estás seguro?`,
+                text: `Eliminar el producto "${productoNombre}" es irreversible.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Creamos un form dinámico para enviar POST con CSRF
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/producto/eliminar/${productoId}/`;
+
+                    const csrfToken = '{{ csrf_token }}';
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'csrfmiddlewaretoken';
+                    input.value = csrfToken;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "proveedores/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Formulario -->
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Agregar Proveedor</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-dark btn-hover-dark">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de proveedores -->
+        <div class="col-md-7">
+            <div class="card bg-secondary text-light shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Proveedores</h5>
+                    {% if proveedores.object_list %}
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover text-white mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>RUT</th>
+                                        <th>Contacto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in proveedores %}
+                                    <tr>
+                                        <td>{{ p.nombre }}</td>
+                                        <td>{{ p.rut }}</td>
+                                        <td>{{ p.contacto }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginación -->
+                        <nav aria-label="Proveedores pagination" class="mt-2">
+                            <ul class="pagination justify-content-center">
+                                {% if proveedores.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ proveedores.previous_page_number }}">Anterior</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                                {% endif %}
+
+                                {% for num in proveedores.paginator.page_range %}
+                                    {% if proveedores.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if proveedores.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ proveedores.next_page_number }}">Siguiente</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% else %}
+                        <div class="alert alert-info mt-2">No hay proveedores registrados.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    {% if messages %}
+        {% for message in messages %}
+        Swal.fire({
+            icon: "{% if 'success' in message.tags %}success{% elif 'error' in message.tags %}error{% else %}info{% endif %}",
+            title: "{% if 'success' in message.tags %}¡Éxito!{% elif 'error' in message.tags %}¡Error!{% else %}Mensaje{% endif %}",
+            text: "{{ message|escapejs }}",
+            confirmButtonColor: "#000",
+            confirmButtonText: "Aceptar",
+            allowOutsideClick: false,
+        });
+        {% endfor %}
+    {% endif %}
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load widget_tweaks %}
+
+<!-- Botón para abrir modal -->
+<button class="btn btn-success btn-hover-dark" data-bs-toggle="modal" data-bs-target="#agregarProductoModal">
+    Agregar Producto
+</button>
+
+<!-- Modal Agregar Producto -->
+<div class="modal fade" id="agregarProductoModal" tabindex="-1" aria-labelledby="agregarProductoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'agregar_producto' proveedor.id %}">
+                {% csrf_token %}
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="agregarProductoModalLabel">Agregar Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        {{ producto_form.tipo_producto.label_tag }}
+                        {{ producto_form.tipo_producto|add_class:"form-select" }}
+                    </div>
+                    <div class="mb-3">
+                        {{ producto_form.nombre.label_tag }}
+                        {{ producto_form.nombre|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success btn-hover-dark">Agregar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

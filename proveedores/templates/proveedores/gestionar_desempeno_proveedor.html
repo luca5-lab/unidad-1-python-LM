@@ -1,0 +1,141 @@
+{% extends "proveedores/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Evaluar Desempeño - {{ proveedor.nombre }}</h2>
+
+    <!-- Formulario para evaluar productos -->
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Calidad (1-10)</th>
+                    <th>Entrega (1-10)</th>
+                    <th>Precio (1-10)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.nombre }}</td>
+                    <td><input type="number" name="calidad_{{ producto.id }}" min="1" max="10" class="form-control" required></td>
+                    <td><input type="number" name="entrega_{{ producto.id }}" min="1" max="10" class="form-control" required></td>
+                    <td><input type="number" name="precio_{{ producto.id }}" min="1" max="10" class="form-control" required></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-dark">Guardar Desempeño</button>
+        <a href="{% url 'gestionar_desempeno' %}" class="btn btn-secondary">Volver</a>
+    </form>
+
+    {% if desempenos %}
+    <!-- Historial de desempeño -->
+    <h4 class="mt-4">Historial de Desempeño</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Calidad</th>
+                <th>Entrega</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in desempenos %}
+            <tr>
+                <td>{{ d.fecha|date:"Y-m-d H:i" }}</td>
+                <td>{{ d.calidad }}</td>
+                <td>{{ d.entrega }}</td>
+                <td>{{ d.precio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if desempenos.paginator.num_pages > 1 %}
+    <!-- Paginador historial de desempeño -->
+    <nav aria-label="Historial Desempeño Pagination" class="mt-2">
+        <ul class="pagination justify-content-center">
+            {% if desempenos.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?desempenos_page={{ desempenos.previous_page_number }}">Anterior</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+
+            {% for num in desempenos.paginator.page_range %}
+                {% if desempenos.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?desempenos_page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if desempenos.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?desempenos_page={{ desempenos.next_page_number }}">Siguiente</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Desempeño Global -->
+    <h4 class="mt-4">Desempeño Global</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>Calidad Promedio</th>
+            <th>Entrega Promedio</th>
+            <th>Precio Promedio</th>
+            <th>Ranking Global</th>
+        </tr>
+        <tr>
+            <td>{{ promedio_calidad|floatformat:2 }}</td>
+            <td>{{ promedio_entrega|floatformat:2 }}</td>
+            <td>{{ promedio_precio|floatformat:2 }}</td>
+            <td>{{ ranking_global|floatformat:2 }}</td>
+        </tr>
+    </table>
+    {% else %}
+    <div class="alert alert-info mt-3">No hay historial de desempeño para mostrar.</div>
+    {% endif %}
+</div>
+
+<!-- 🔥 SWEETALERT -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  {% if swal_success %}
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: '{{ swal_success }}',
+      confirmButtonColor: "#000",
+      confirmButtonText: "Aceptar",
+      allowOutsideClick: false,
+      allowEscapeKey: true
+    });
+  {% elif swal_error %}
+    Swal.fire({
+      icon: 'error',
+      title: '¡Error!',
+      text: '{{ swal_error }}',
+      confirmButtonColor: "#000",
+      confirmButtonText: "Aceptar",
+      allowOutsideClick: false,
+      allowEscapeKey: true
+    });
+  {% endif %}
+});
+</script>
+
+{% endblock %}
